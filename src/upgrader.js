@@ -8,7 +8,7 @@ module.exports = function (creep) {
 
   var status = creep.upgradeController(controller);
 
-  if (status !== 0) {
+  if (status !== OK) {
     creep.moveTo(controller, utilities.globalMoveToOptions);
   }
 };

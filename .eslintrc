@@ -18,6 +18,7 @@
     "FIND_SOURCES": true,
     "FIND_STRUCTURES": true,
     "Game": true,
+    "OK": true,
     "STRUCTURE_EXTENSION": true,
     "STRUCTURE_RAMPART": true,
     "STRUCTURE_WALL": true,
