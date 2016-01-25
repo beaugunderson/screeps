@@ -26,6 +26,21 @@ var roles = {
 //   });
 // }
 
+function defendRoom() {
+  var room = Game.spawns.Spawn1.room;
+  var hostiles = room.find(FIND_HOSTILE_CREEPS);
+
+  // TODO: add heal, repair
+  if (hostiles.length > 0) {
+    Game.notify('Enemies spotted in room');
+
+    var towers = room.find(FIND_MY_STRUCTURES,
+      {filter: {structureType: STRUCTURE_TOWER}});
+
+    towers.forEach(tower => tower.attack(hostiles[0]));
+  }
+}
+
 var TICKS_LOW = 300;
 var TICKS_MEDIUM = 700;
 var TICKS_HIGH = 1000;
@@ -66,6 +81,8 @@ function pickupDroppedEnergy(creep) {
 
 module.exports.loop = function () {
   // counts();
+
+  defendRoom();
 
   var lowestCreep = _.sortBy(Game.creeps, function (creep) {
     return creep.ticksToLive;

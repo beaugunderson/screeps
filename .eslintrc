@@ -14,6 +14,7 @@
     "ERR_NOT_IN_RANGE": true,
     "FIND_CONSTRUCTION_SITES": true,
     "FIND_DROPPED_ENERGY": true,
+    "FIND_HOSTILE_CREEPS": true,
     "FIND_MY_STRUCTURES": true,
     "FIND_SOURCES": true,
     "FIND_STRUCTURES": true,
