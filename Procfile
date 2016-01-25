@@ -1,0 +1,1 @@
+upload: npm start
