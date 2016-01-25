@@ -26,10 +26,14 @@ var roles = {
 //   });
 // }
 
+var TICKS_LOW = 300;
+var TICKS_MEDIUM = 700;
+var TICKS_HIGH = 1000;
+
 function rechargeIfNeeded(creep) {
-  if (creep.ticksToLive <= 300) {
+  if (creep.ticksToLive <= TICKS_LOW) {
     creep.memory.recharging = true;
-  } else if (creep.ticksToLive >= 900) {
+  } else if (creep.ticksToLive >= TICKS_HIGH) {
     creep.memory.recharging = false;
   }
 
@@ -96,7 +100,9 @@ module.exports.loop = function () {
       return;
     }
 
-    creep.memory.recharging = false;
+    if (creep.ticksToLive >= TICKS_MEDIUM) {
+      creep.memory.recharging = false;
+    }
 
     // TODO: this uses lots of CPU
     pickupDroppedEnergy(creep);

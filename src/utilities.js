@@ -1,6 +1,47 @@
 'use strict';
 
-exports.getEnergy = function (creep) {
+var globalMoveToOptions = exports.globalMoveToOptions = {
+  reusePath: 0
+};
+
+exports.wantEnergyCount = function () {
+  var count = 0;
+
+  _.forEach(Game.creeps, function (creep) {
+    if (creep.memory.role !== 'mule' &&
+        creep.memory.status === 'loading') {
+      count++;
+    }
+
+    if (creep.memory.recharging) {
+      count++;
+    }
+  });
+
+  return count;
+};
+
+var rechargeCount = exports.rechargeCount = function () {
+  var count = 0;
+
+  _.forEach(Game.creeps, function (creep) {
+    if (creep.memory.recharging) {
+      count++;
+    }
+  });
+
+  return count;
+};
+
+exports.getEnergy = function (creep, options) {
+  if (!options) {
+    options = {force: false};
+  }
+
+  if (!options.force && rechargeCount() > 0) {
+    return;
+  }
+
   var spawn = Game.spawns.Spawn1;
   var target;
 
@@ -45,21 +86,4 @@ exports.offloadEnergy = function (creep) {
       creep.moveTo(extensions[0], globalMoveToOptions);
     }
   }
-};
-
-exports.wantEnergyCount = function () {
-  var count = 0;
-
-  _.forEach(Game.creeps, function (creep) {
-    if (creep.memory.role !== 'mule' &&
-        creep.memory.status === 'loading') {
-      count++;
-    }
-
-    if (creep.memory.recharging) {
-      count++;
-    }
-  });
-
-  return count;
 };
