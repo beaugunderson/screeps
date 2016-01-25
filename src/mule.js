@@ -27,7 +27,7 @@ module.exports = function (creep) {
   case 'transporting':
     if (creep.carry.energy > 0) {
       if (creep.transferEnergy(upgrader) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(upgrader);
+        creep.moveTo(upgrader, utilities.globalMoveToOptions);
       }
     } else {
       creep.memory.status = 'loading';
@@ -45,7 +45,7 @@ module.exports = function (creep) {
     if (creep.carry.energy > 0) {
       utilities.offloadEnergy(creep);
     } else {
-      creep.moveTo(Game.flags.Waiting);
+      creep.moveTo(Game.flags.Waiting, utilities.globalMoveToOptions);
     }
 
     break;

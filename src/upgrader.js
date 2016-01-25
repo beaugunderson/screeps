@@ -1,5 +1,7 @@
 'use strict';
 
+var utilities = require('utilities');
+
 module.exports = function (creep) {
   var spawn = Game.spawns.Spawn1;
   var controller = spawn.room.controller;
@@ -7,6 +9,6 @@ module.exports = function (creep) {
   var status = creep.upgradeController(controller);
 
   if (status !== 0) {
-    creep.moveTo(controller);
+    creep.moveTo(controller, utilities.globalMoveToOptions);
   }
 };

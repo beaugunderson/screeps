@@ -43,13 +43,13 @@ function build(creep, options) {
   if (repairTargets.length) {
     if (creep.repair(repairTargets[0]) == ERR_NOT_IN_RANGE) {
       if (options.move) {
-        creep.moveTo(repairTargets[0]);
+        creep.moveTo(repairTargets[0], utilities.globalMoveToOptions);
       }
     }
   } else if (constructionTargets.length) {
     if (creep.build(constructionTargets[0]) == ERR_NOT_IN_RANGE) {
       if (options.move) {
-        creep.moveTo(constructionTargets[0]);
+        creep.moveTo(constructionTargets[0], utilities.globalMoveToOptions);
       }
     }
   }

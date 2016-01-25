@@ -1,5 +1,7 @@
 'use strict';
 
+var utilities = require('utilities');
+
 var roles = {
   harvester: require('harvester'),
   builder: require('builder'),
@@ -48,7 +50,7 @@ function recharge(creep) {
       creep.dropEnergy();
     }
 
-    creep.moveTo(spawn);
+    creep.moveTo(spawn, utilities.globalMoveToOptions);
 
     return true;
   } else if (status == ERR_FULL) {

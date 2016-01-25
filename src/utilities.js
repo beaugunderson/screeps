@@ -19,7 +19,7 @@ exports.getEnergy = function (creep) {
   }
 
   if (target.transferEnergy(creep) == ERR_NOT_IN_RANGE) {
-    creep.moveTo(target);
+    creep.moveTo(target, globalMoveToOptions);
   }
 };
 
@@ -28,7 +28,7 @@ exports.offloadEnergy = function (creep) {
 
   if (spawn.energy < spawn.energyCapacity) {
     if (creep.transferEnergy(spawn) == ERR_NOT_IN_RANGE) {
-      creep.moveTo(spawn);
+      creep.moveTo(spawn, globalMoveToOptions);
     }
   } else {
     var extensions = Game.spawns.Spawn1.room.find(FIND_MY_STRUCTURES, {
@@ -42,7 +42,7 @@ exports.offloadEnergy = function (creep) {
     }
 
     if (creep.transferEnergy(extensions[0]) == ERR_NOT_IN_RANGE) {
-      creep.moveTo(extensions[0]);
+      creep.moveTo(extensions[0], globalMoveToOptions);
     }
   }
 };
