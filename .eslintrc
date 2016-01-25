@@ -21,6 +21,7 @@
     "OK": true,
     "STRUCTURE_EXTENSION": true,
     "STRUCTURE_RAMPART": true,
+    "STRUCTURE_TOWER": true,
     "STRUCTURE_WALL": true,
     "_": true
   },
