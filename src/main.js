@@ -38,32 +38,8 @@ function rechargeIfNeeded(creep) {
   }
 
   if (creep.memory.recharging) {
-    return recharge(creep);
+    return utilities.recharge(creep);
   }
-}
-
-function recharge(creep) {
-  var spawn = Game.spawns.Spawn1;
-
-  creep.transferEnergy(spawn);
-
-  var status = spawn.renewCreep(creep);
-
-  if (status == ERR_NOT_IN_RANGE) {
-    if (creep.energy) {
-      creep.dropEnergy();
-    }
-
-    creep.moveTo(spawn, utilities.globalMoveToOptions);
-
-    return true;
-  } else if (status == ERR_FULL) {
-    creep.memory.recharging = false;
-
-    return false;
-  }
-
-  return true;
 }
 
 // function counts() {

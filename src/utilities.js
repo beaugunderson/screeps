@@ -33,6 +33,30 @@ var rechargeCount = exports.rechargeCount = function () {
   return count;
 };
 
+var recharge = exports.recharge = function (creep) {
+  var spawn = Game.spawns.Spawn1;
+
+  creep.transferEnergy(spawn);
+
+  var status = spawn.renewCreep(creep);
+
+  if (status == ERR_NOT_IN_RANGE) {
+    if (creep.energy) {
+      creep.dropEnergy();
+    }
+
+    creep.moveTo(spawn, globalMoveToOptions);
+
+    return true;
+  } else if (status == ERR_FULL) {
+    creep.memory.recharging = false;
+
+    return false;
+  }
+
+  return true;
+};
+
 exports.getEnergy = function (creep, options) {
   if (!options) {
     options = {force: false};
@@ -53,7 +77,8 @@ exports.getEnergy = function (creep, options) {
 
   extensions = _(extensions).sortBy('energy').reverse().value();
 
-  if (extensions.length) {
+  if (extensions.length &&
+      extensions[0].energy > spawn.energy) {
     target = extensions[0];
   } else {
     target = spawn;
@@ -79,7 +104,7 @@ exports.offloadEnergy = function (creep) {
     });
 
     if (!extensions.length) {
-      return;
+      return recharge(creep);
     }
 
     if (creep.transferEnergy(extensions[0]) == ERR_NOT_IN_RANGE) {
