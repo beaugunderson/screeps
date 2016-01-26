@@ -132,10 +132,6 @@ module.exports.loop = function () {
     // TODO: this uses lots of CPU
     pickupDroppedEnergy(creep);
 
-    if (rechargeIfNeeded(creep)) {
-      return;
-    }
-
     if (roles[creep.memory.role]) {
       roles[creep.memory.role](creep);
     }
