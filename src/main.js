@@ -59,6 +59,7 @@ function doTowers() {
   }
 }
 
+var TICKS_CRITICAL = 200;
 var TICKS_LOW = 300;
 var TICKS_MEDIUM = 700;
 var TICKS_HIGH = 1000;
@@ -102,6 +103,12 @@ function pickupDroppedEnergy(creep) {
 
 module.exports.loop = function () {
   // counts();
+
+  var critical = _.filter(Game.creeps, c => c.ticksToLive < TICKS_CRITICAL);
+
+  if (critical.length) {
+    Game.notify(`${critical.length} creep(s) going critical`);
+  }
 
   doTowers();
 
