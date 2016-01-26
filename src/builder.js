@@ -2,51 +2,11 @@
 
 var utilities = require('utilities');
 
-function structuresNeedingRepair() {
-  var spawn = Game.spawns.Spawn1;
-  var room = spawn.room;
-
-  var damaged = room.find(FIND_MY_STRUCTURES, {
-    filter: function (structure) {
-      return structure.structureType !== STRUCTURE_RAMPART &&
-        structure.hits < structure.hitsMax / 2;
-    }
-  });
-
-  var ramparts = room.find(FIND_MY_STRUCTURES, {
-    filter: {structureType: STRUCTURE_RAMPART}
-  }).filter(function (rampart) {
-    return rampart.hits < 1000;
-  });
-
-  var walls = room.find(FIND_STRUCTURES, {
-    filter: {structureType: STRUCTURE_WALL}
-  }).filter(function (wall) {
-    return wall.hits < 2500;
-  });
-
-  return damaged
-    .concat(ramparts)
-    .concat(walls);
-}
-
 function build(creep, options) {
   if (!options) {
     options = {
       move: true
     };
-  }
-
-  var repairTargets = structuresNeedingRepair();
-
-  if (repairTargets.length) {
-    if (creep.repair(repairTargets[0]) == ERR_NOT_IN_RANGE) {
-      if (options.move) {
-        creep.moveTo(repairTargets[0], utilities.globalMoveToOptions);
-      }
-    }
-
-    return;
   }
 
   var constructionTargets = creep.room.find(FIND_CONSTRUCTION_SITES);
@@ -72,6 +32,18 @@ function build(creep, options) {
     if (creep.transferEnergy(towersNeedingEnergy[0]) == ERR_NOT_IN_RANGE) {
       if (options.move) {
         creep.moveTo(towersNeedingEnergy[0], utilities.globalMoveToOptions);
+      }
+    }
+
+    return;
+  }
+
+  var repairTargets = utilities.structuresNeedingRepair();
+
+  if (repairTargets.length) {
+    if (creep.repair(repairTargets[0]) == ERR_NOT_IN_RANGE) {
+      if (options.move) {
+        creep.moveTo(repairTargets[0], utilities.globalMoveToOptions);
       }
     }
 

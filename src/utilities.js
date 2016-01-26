@@ -1,7 +1,45 @@
 'use strict';
 
+var DESIRED_WALL_HITS = 10000;
+
 var globalMoveToOptions = exports.globalMoveToOptions = {
   reusePath: 0
+};
+
+exports.creepsNeedingHealing = function () {
+  var spawn = Game.spawns.Spawn1;
+  var room = spawn.room;
+
+  return room.find(FIND_MY_CREEPS, {
+    filter: creep => creep.hits < creep.hitsMax});
+};
+
+exports.structuresNeedingRepair = function () {
+  var spawn = Game.spawns.Spawn1;
+  var room = spawn.room;
+
+  var damaged = room.find(FIND_MY_STRUCTURES, {
+    filter: function (structure) {
+      return structure.structureType !== STRUCTURE_RAMPART &&
+        structure.hits < structure.hitsMax / 2;
+    }
+  });
+
+  var ramparts = room.find(FIND_MY_STRUCTURES, {
+    filter: {structureType: STRUCTURE_RAMPART}
+  }).filter(function (rampart) {
+    return rampart.hits < DESIRED_WALL_HITS;
+  });
+
+  var walls = room.find(FIND_STRUCTURES, {
+    filter: {structureType: STRUCTURE_WALL}
+  }).filter(function (wall) {
+    return wall.hits < DESIRED_WALL_HITS;
+  });
+
+  return damaged
+    .concat(ramparts)
+    .concat(walls);
 };
 
 exports.wantEnergyCount = function () {

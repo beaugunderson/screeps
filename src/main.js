@@ -27,18 +27,35 @@ var roles = {
 //   });
 // }
 
-function defendRoom() {
+function doTowers() {
   var room = Game.spawns.Spawn1.room;
+  var towers = room.find(FIND_MY_STRUCTURES,
+    {filter: {structureType: STRUCTURE_TOWER}});
+
   var hostiles = room.find(FIND_HOSTILE_CREEPS);
 
-  // TODO: add heal, repair
   if (hostiles.length > 0) {
     Game.notify('Enemies spotted in room');
 
-    var towers = room.find(FIND_MY_STRUCTURES,
-      {filter: {structureType: STRUCTURE_TOWER}});
-
     towers.forEach(tower => tower.attack(hostiles[0]));
+
+    return;
+  }
+
+  var damaged = utilities.creepsNeedingHealing();
+
+  if (damaged.length) {
+    towers.forEach(tower => tower.heal(damaged[0]));
+
+    return;
+  }
+
+  var repairTargets = utilities.structuresNeedingRepair();
+
+  if (repairTargets.length) {
+    towers.forEach(tower => tower.repair(repairTargets[0]));
+
+    return;
   }
 }
 
@@ -83,7 +100,7 @@ function pickupDroppedEnergy(creep) {
 module.exports.loop = function () {
   // counts();
 
-  defendRoom();
+  doTowers();
 
   var lowestCreep = _.sortBy(Game.creeps, function (creep) {
     return creep.ticksToLive;

@@ -15,6 +15,7 @@
     "FIND_CONSTRUCTION_SITES": true,
     "FIND_DROPPED_ENERGY": true,
     "FIND_HOSTILE_CREEPS": true,
+    "FIND_MY_CREEPS": true,
     "FIND_MY_STRUCTURES": true,
     "FIND_SOURCES": true,
     "FIND_STRUCTURES": true,
@@ -22,6 +23,7 @@
     "OK": true,
     "STRUCTURE_EXTENSION": true,
     "STRUCTURE_RAMPART": true,
+    "STRUCTURE_ROAD": true,
     "STRUCTURE_TOWER": true,
     "STRUCTURE_WALL": true,
     "_": true
