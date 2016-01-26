@@ -61,7 +61,7 @@ function doTowers() {
 
 var TICKS_CRITICAL = 200;
 var TICKS_LOW = 300;
-var TICKS_MEDIUM = 700;
+// var TICKS_MEDIUM = 700;
 var TICKS_HIGH = 1000;
 
 function needsRecharge(creep) {
@@ -91,47 +91,55 @@ function needsRecharge(creep) {
 function pickupDroppedEnergy(creep) {
   if (creep.carry.energy < creep.carryCapacity &&
       !creep.memory.recharging) {
-    var target = creep.pos.findClosestByRange(FIND_DROPPED_ENERGY);
+    var energy = creep.pos.findClosestByRange(FIND_DROPPED_ENERGY);
 
-    if (target) {
-      creep.pickup(target);
+    if (energy) {
+      creep.pickup(energy);
     }
   }
 }
 
-module.exports.loop = function () {
-  // counts();
+var ROLE_ORDER = {
+  attacker: 3,
+  builder: 1,
+  harvester: 0,
+  mule: 2,
+  upgrader: 1
+};
 
-  var spawn = Game.spawns.Spawn1;
+function rechargeOrder() {
+  var creeps = _(Game.creeps)
+    .filter(c => c.ticksToLive < TICKS_LOW || c.memory.recharging)
+    .sortBy(c => ROLE_ORDER[c.memory.role])
+    .value();
 
+  if (creeps.length) {
+    return creeps[0];
+  }
+}
+
+function notifyCritical() {
   var critical = _.filter(Game.creeps, c => c.ticksToLive < TICKS_CRITICAL);
 
   if (critical.length) {
     Game.notify(`${critical.length} creep(s) going critical`);
   }
+}
 
+module.exports.loop = function () {
+  notifyCritical();
   doTowers();
 
-  var lowestCreep = _.sortBy(Game.creeps, function (creep) {
-    return creep.ticksToLive;
-  })[0];
+  var spawn = Game.spawns.Spawn1;
+  var toRecharge = rechargeOrder();
 
   _.forEach(Game.creeps, function (creep) {
     if (needsRecharge(creep)) {
-      if ((creep === lowestCreep ||
+      if ((creep === toRecharge ||
            (creep.memory.role === 'attacker' && spawn.memory.war)) &&
              utilities.recharge(creep)) {
         return;
       }
-
-      // TODO: special-case here?
-      creep.moveTo(spawn, utilities.globalMoveToOptions);
-
-      return;
-    }
-
-    if (creep.ticksToLive >= TICKS_MEDIUM) {
-      creep.memory.recharging = false;
     }
 
     // TODO: this uses lots of CPU
