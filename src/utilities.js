@@ -37,9 +37,14 @@ exports.structuresNeedingRepair = function () {
     return wall.hits < DESIRED_WALL_HITS;
   });
 
+  var roads = room.find(FIND_STRUCTURES, {
+    filter: {structureType: STRUCTURE_ROAD}
+  }).filter(road => road.hits < road.hitsMax);
+
   return damaged
     .concat(ramparts)
-    .concat(walls);
+    .concat(walls)
+    .concat(roads);
 };
 
 exports.wantEnergyCount = function () {
