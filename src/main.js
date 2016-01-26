@@ -3,10 +3,11 @@
 var utilities = require('utilities');
 
 var roles = {
-  harvester: require('harvester'),
+  attacker: require('attacker'),
   builder: require('builder'),
-  upgrader: require('upgrader'),
-  mule: require('mule')
+  harvester: require('harvester'),
+  mule: require('mule'),
+  upgrader: require('upgrader')
 };
 
 // function spawnCreep(spawn, role) {
