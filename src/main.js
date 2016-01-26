@@ -5,6 +5,7 @@ var utilities = require('utilities');
 var roles = {
   attacker: require('attacker'),
   builder: require('builder'),
+  explorer: require('explorer'),
   harvester: require('harvester'),
   mule: require('mule'),
   upgrader: require('upgrader')
