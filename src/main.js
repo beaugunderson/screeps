@@ -110,7 +110,8 @@ module.exports.loop = function () {
   })[0];
 
   _.forEach(Game.creeps, function (creep) {
-    if (creep === lowestCreep && rechargeIfNeeded(lowestCreep)) {
+    if ((creep === lowestCreep || creep.memory.role === 'attacker') &&
+        rechargeIfNeeded(creep)) {
       return;
     }
 
