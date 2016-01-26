@@ -79,7 +79,7 @@ var recharge = exports.recharge = function (creep) {
   var status = spawn.renewCreep(creep);
 
   if (status == ERR_NOT_IN_RANGE) {
-    if (creep.energy) {
+    if (creep.carry.energy) {
       creep.dropEnergy();
     }
 

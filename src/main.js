@@ -64,9 +64,12 @@ var TICKS_MEDIUM = 700;
 var TICKS_HIGH = 1000;
 
 function rechargeIfNeeded(creep) {
+  var spawn = Game.spawns.Spawn1;
+
   if (creep.ticksToLive <= TICKS_LOW) {
     creep.memory.recharging = true;
-  } else if (creep.ticksToLive >= TICKS_HIGH) {
+  } else if (creep.ticksToLive >= TICKS_HIGH &&
+             !(spawn.memory.war && creep.memory.role === 'attacker')) {
     creep.memory.recharging = false;
   }
 

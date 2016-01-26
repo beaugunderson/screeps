@@ -4,10 +4,15 @@ var utilities = require('utilities');
 
 module.exports = function (creep) {
   var flag = Game.flags.Attack.pos;
-  var mainRoom = Game.spawns.Spawn1.room;
+  var spawn = Game.spawns.Spawn1;
+  var mainRoom = spawn.room;
 
   if (mainRoom.name === flag.roomName) {
     creep.memory.status = 'guarding';
+
+    if (spawn.memory.war) {
+      creep.memory.recharging = true;
+    }
   } else {
     creep.memory.status = 'attacking';
   }
