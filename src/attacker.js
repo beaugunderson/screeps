@@ -57,7 +57,7 @@ module.exports = function (creep) {
     } else {
       spawn.memory.war = false;
 
-      creep.memory.status = guarding;
+      creep.memory.status = 'guarding';
     }
 
     break;
