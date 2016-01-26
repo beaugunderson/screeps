@@ -2,13 +2,12 @@
 
 var utilities = require('utilities');
 
-function build(creep, options) {
-  if (!options) {
-    options = {
-      move: true
-    };
-  }
+function getTowers(room) {
+  return room.find(FIND_MY_STRUCTURES, {
+    filter: {structureType: STRUCTURE_TOWER}});
+}
 
+function construct(creep, options) {
   var constructionTargets = creep.room.find(FIND_CONSTRUCTION_SITES);
 
   if (constructionTargets.length) {
@@ -18,15 +17,12 @@ function build(creep, options) {
       }
     }
 
-    return;
+    return true;
   }
+}
 
-  var towersNeedingEnergy = creep.room.find(FIND_MY_STRUCTURES, {
-    filter: function (structure) {
-      return structure.structureType === STRUCTURE_TOWER &&
-             structure.energy < structure.energyCapacity;
-    }
-  });
+function fillTowers(creep, towers, options) {
+  var towersNeedingEnergy = _.filter(towers, t => t.energy < t.energyCapacity);
 
   if (towersNeedingEnergy.length) {
     if (creep.transferEnergy(towersNeedingEnergy[0]) == ERR_NOT_IN_RANGE) {
@@ -35,9 +31,11 @@ function build(creep, options) {
       }
     }
 
-    return;
+    return true;
   }
+}
 
+function repair(creep, options) {
   var repairTargets = utilities.structuresNeedingRepair();
 
   if (repairTargets.length) {
@@ -47,8 +45,33 @@ function build(creep, options) {
       }
     }
 
+    return true;
+  }
+}
+
+function build(creep, options) {
+  if (!options) {
+    options = {
+      move: true
+    };
+  }
+
+  var towers = getTowers(creep.room);
+  var anyTowersHaveEnergy = _.filter(towers, t => t.energy >= 10);
+
+  // if there are towers with energy then let them repair things while we
+  // do construction
+  if (anyTowersHaveEnergy) {
+    if (construct(creep, options)) {
+      return;
+    }
+  }
+
+  if (fillTowers(creep, towers, options)) {
     return;
   }
+
+  repair(creep, options);
 }
 
 module.exports = function (creep) {
