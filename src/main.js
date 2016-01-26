@@ -64,7 +64,7 @@ var TICKS_LOW = 300;
 var TICKS_MEDIUM = 700;
 var TICKS_HIGH = 1000;
 
-function rechargeIfNeeded(creep) {
+function needsRecharge(creep) {
   var spawn = Game.spawns.Spawn1;
 
   if (creep.ticksToLive <= TICKS_LOW) {
@@ -74,9 +74,7 @@ function rechargeIfNeeded(creep) {
     creep.memory.recharging = false;
   }
 
-  if (creep.memory.recharging) {
-    return utilities.recharge(creep);
-  }
+  return creep.memory.recharging;
 }
 
 // function counts() {
@@ -119,9 +117,16 @@ module.exports.loop = function () {
   })[0];
 
   _.forEach(Game.creeps, function (creep) {
-    if ((creep === lowestCreep ||
-         (creep.memory.role === 'attacker' && spawn.memory.war)) &&
-           rechargeIfNeeded(creep)) {
+    if (needsRecharge(creep)) {
+      if ((creep === lowestCreep ||
+           (creep.memory.role === 'attacker' && spawn.memory.war)) &&
+             utilities.recharge(creep)) {
+        return;
+      }
+
+      // TODO: special-case here?
+      creep.moveTo(spawn, utilities.globalMoveToOptions);
+
       return;
     }
 
