@@ -104,6 +104,8 @@ function pickupDroppedEnergy(creep) {
 module.exports.loop = function () {
   // counts();
 
+  var spawn = Game.spawns.Spawn1;
+
   var critical = _.filter(Game.creeps, c => c.ticksToLive < TICKS_CRITICAL);
 
   if (critical.length) {
@@ -117,8 +119,9 @@ module.exports.loop = function () {
   })[0];
 
   _.forEach(Game.creeps, function (creep) {
-    if ((creep === lowestCreep || creep.memory.role === 'attacker') &&
-        rechargeIfNeeded(creep)) {
+    if ((creep === lowestCreep ||
+         (creep.memory.role === 'attacker' && spawn.memory.war)) &&
+           rechargeIfNeeded(creep)) {
       return;
     }
 
