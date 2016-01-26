@@ -18,7 +18,12 @@ module.exports = function (creep) {
 
   switch (creep.memory.status) {
   case 'attacking':
-    var hostileCreep = flag.findClosestByRange(FIND_HOSTILE_CREEPS);
+    var healer = flag.findClosestByRange(FIND_HOSTILE_CREEPS, {
+      filter: c => c.getActiveBodyparts(HEAL) > 0});
+
+    var hostileCreep = flag.findClosestByRange(FIND_HOSTILE_CREEPS, {
+      filter: c => c.getActiveBodyparts(ATTACK) > 0});
+
     var hostileStructure = flag.findClosestByRange(FIND_STRUCTURES, {
       filter: function (structure) {
         return structure.structureType !== STRUCTURE_ROAD &&
@@ -27,7 +32,10 @@ module.exports = function (creep) {
       }
     });
 
-    var hostile = hostileCreep || hostileStructure;
+    var docileCreep = flag.findClosestByRange(FIND_HOSTILE_CREEPS, {
+      filter: c => c.getActiveBodyparts(ATTACK) === 0});
+
+    var hostile = healer || hostileCreep || hostileStructure || docileCreep;
 
     if (creep.attack(hostile) === ERR_NOT_IN_RANGE) {
       creep.moveTo(hostile, utilities.globalMoveToOptions);
