@@ -13,13 +13,13 @@ module.exports = function (creep) {
     creep.memory.status = 'exploring';
   }
 
-  if (creep.room.name !== exploreFlag.roomName) {
-    return creep.moveTo(exploreFlag);
-  }
-
   switch (creep.memory.status) {
   case 'exploring':
     if (creep.carry.energy) {
+      if (creep.room.name !== exploreFlag.roomName) {
+        return creep.moveTo(exploreFlag);
+      }
+
       var constructionTargets = creep.room.find(FIND_CONSTRUCTION_SITES);
 
       if (constructionTargets.length) {
@@ -30,13 +30,20 @@ module.exports = function (creep) {
         return;
       }
 
-      var controller = creep.room.find(FIND_STRUCTURES,
-        {filter: {structureType: STRUCTURE_CONTROLLER}})[0];
+      var controller = creep.room.controller;
 
-      var status = creep.upgradeController(controller);
+      if (controller) {
+        var status;
 
-      if (status !== OK) {
-        creep.moveTo(controller, utilities.globalMoveToOptions);
+        if (!controller.my) {
+          status = creep.claimController(controller);
+        } else {
+          status = creep.upgradeController(controller);
+        }
+
+        if (status == ERR_NOT_IN_RANGE) {
+          creep.moveTo(creep.room.controller, utilities.globalMoveToOptions);
+        }
       }
 
       return;
@@ -45,10 +52,15 @@ module.exports = function (creep) {
     creep.memory.status = 'loading';
 
   case 'loading':
-    // TODO; renew to max
+    if (creep.room.name !== exploreFlag.roomName) {
+      return creep.moveTo(exploreFlag);
+    }
+
     if (creep.carry.energy < creep.carryCapacity) {
       utilities.getEnergy(creep);
     }
+
+    // TODO recharge to max
 
     break;
 
