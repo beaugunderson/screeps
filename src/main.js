@@ -103,6 +103,7 @@ function pickupDroppedEnergy(creep) {
 var ROLE_ORDER = {
   attacker: 3,
   builder: 1,
+  explorer: 3,
   harvester: 0,
   mule: 2,
   upgrader: 1
