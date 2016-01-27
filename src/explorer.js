@@ -4,10 +4,8 @@ var utilities = require('utilities');
 
 module.exports = function (creep) {
   var exploreFlag = Game.flags.Explore.pos;
-  var spawn = Game.spawns.Spawn1;
-  var mainRoom = spawn.room;
 
-  if (mainRoom.name === exploreFlag.roomName) {
+  if (Memory.mainRoom === exploreFlag.roomName) {
     creep.memory.status = 'loading';
   } else if (creep.carry.energy === creep.carryCapacity) {
     creep.memory.status = 'exploring';

@@ -5,26 +5,24 @@ var utilities = require('utilities');
 module.exports = function (creep) {
   var attackFlag = Game.flags.Attack.pos;
   var guardFlag = Game.flags.Guard.pos;
-  var spawn = Game.spawns.Spawn1;
-  var mainRoom = spawn.room;
 
   if (creep.getActiveBodyparts(ATTACK) === 0) {
     creep.memory.status = 'guarding';
   }
 
-  if (mainRoom.name === attackFlag.roomName) {
+  if (Memory.mainRoom === attackFlag.roomName) {
     creep.memory.status = 'guarding';
 
-    if (spawn.memory.war) {
+    if (Memory.war) {
       creep.memory.recharging = true;
     }
   } else if (creep.getActiveBodyparts(ATTACK) > 0 &&
-             spawn.memory.war) {
+             Memory.war) {
     creep.memory.status = 'attacking';
   }
 
   if (creep.room.name !== attackFlag.roomName &&
-      spawn.memory.war) {
+      Memory.war) {
     return creep.moveTo(attackFlag);
   }
 
@@ -55,7 +53,7 @@ module.exports = function (creep) {
         creep.moveTo(hostile, utilities.globalMoveToOptions);
       }
     } else {
-      spawn.memory.war = false;
+      Memory.war = false;
 
       creep.memory.status = 'guarding';
     }
@@ -63,7 +61,7 @@ module.exports = function (creep) {
     break;
 
   case 'guarding':
-    var hostiles = mainRoom.find(FIND_HOSTILE_CREEPS);
+    var hostiles = Game.rooms[Memory.mainRoom].find(FIND_HOSTILE_CREEPS);
 
     if (hostiles.length) {
       if (creep.attack(hostiles[0]) === ERR_NOT_IN_RANGE) {

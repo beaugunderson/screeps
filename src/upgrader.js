@@ -3,8 +3,7 @@
 var utilities = require('utilities');
 
 module.exports = function (creep) {
-  var spawn = Game.spawns.Spawn1;
-  var controller = spawn.room.controller;
+  var controller = creep.room.controller;
 
   var status = creep.upgradeController(controller);
 

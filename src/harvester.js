@@ -2,8 +2,8 @@
 
 var utilities = require('utilities');
 
-function balanceSources() {
-  var sources = Game.spawns.Spawn1.room.find(FIND_SOURCES);
+function balanceSources(room) {
+  var sources = room.find(FIND_SOURCES);
   var count = 0;
 
   _.forEach(Game.creeps, function (creep) {
@@ -19,7 +19,7 @@ function balanceSources() {
 
 module.exports = function (creep) {
   if (!creep.memory.sourceId) {
-    balanceSources();
+    balanceSources(creep.room);
   }
 
   switch (creep.memory.status) {

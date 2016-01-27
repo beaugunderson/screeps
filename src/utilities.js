@@ -6,45 +6,38 @@ var globalMoveToOptions = exports.globalMoveToOptions = {
   reusePath: 0
 };
 
-exports.creepsNeedingHealing = function () {
-  var spawn = Game.spawns.Spawn1;
-  var room = spawn.room;
-
+exports.creepsNeedingHealing = function (room) {
   return room.find(FIND_MY_CREEPS, {
     filter: creep => creep.hits < creep.hitsMax});
 };
 
-exports.structuresNeedingRepair = function () {
-  var spawn = Game.spawns.Spawn1;
-  var room = spawn.room;
-
+exports.structuresNeedingRepair = function (room) {
   var damaged = room.find(FIND_MY_STRUCTURES, {
-    filter: function (structure) {
-      return structure.structureType !== STRUCTURE_RAMPART &&
-        structure.hits < structure.hitsMax / 2;
+    filter: s => {
+      return s.structureType !== STRUCTURE_RAMPART &&
+             s.hits < s.hitsMax / 2;
     }
   });
 
   var ramparts = room.find(FIND_MY_STRUCTURES, {
-    filter: {structureType: STRUCTURE_RAMPART}
-  }).filter(function (rampart) {
-    return rampart.hits < DESIRED_WALL_HITS;
+    filter: s => {
+      return s.structureType === STRUCTURE_RAMPART &&
+             s.hits < DESIRED_WALL_HITS;
+    }
   });
 
-  var walls = room.find(FIND_STRUCTURES, {
-    filter: {structureType: STRUCTURE_WALL}
-  }).filter(function (wall) {
-    return wall.hits < DESIRED_WALL_HITS;
+  var wallsAndRoads = room.find(FIND_STRUCTURES, {
+    filter: s => {
+      return (s.structureType === STRUCTURE_WALL &&
+              s.hits < DESIRED_WALL_HITS) ||
+             (s.structureType === STRUCTURE_ROAD &&
+              s.hits < s.hitsMax);
+    }
   });
-
-  var roads = room.find(FIND_STRUCTURES, {
-    filter: {structureType: STRUCTURE_ROAD}
-  }).filter(road => road.hits < road.hitsMax);
 
   return damaged
     .concat(ramparts)
-    .concat(walls)
-    .concat(roads);
+    .concat(wallsAndRoads);
 };
 
 exports.wantEnergyCount = function () {
@@ -52,7 +45,8 @@ exports.wantEnergyCount = function () {
 
   _.forEach(Game.creeps, function (creep) {
     if (creep.memory.role !== 'mule' &&
-        creep.memory.status === 'loading') {
+        creep.memory.status === 'loading' &&
+        creep.carry.energy < creep.carryCapacity) {
       count++;
     }
 
@@ -76,6 +70,7 @@ var rechargeCount = exports.rechargeCount = function () {
   return count;
 };
 
+// TODO: specify spawn as a parameter
 var recharge = exports.recharge = function (creep) {
   var spawn = Game.spawns.Spawn1;
 
@@ -84,7 +79,7 @@ var recharge = exports.recharge = function (creep) {
   var status = spawn.renewCreep(creep);
 
   if (status == ERR_NOT_IN_RANGE) {
-    if (creep.carry.energy) {
+    if (creep.memory.recharging && creep.carry.energy) {
       creep.dropEnergy();
     }
 
@@ -100,6 +95,12 @@ var recharge = exports.recharge = function (creep) {
   return true;
 };
 
+function isEnergyHolder(structure) {
+  return structure.structureType === STRUCTURE_STORAGE ||
+         structure.structureType === STRUCTURE_EXTENSION ||
+         structure.structureType === STRUCTURE_SPAWN;
+}
+
 exports.getEnergy = function (creep, options) {
   if (!options) {
     options = {force: false};
@@ -109,49 +110,44 @@ exports.getEnergy = function (creep, options) {
     return;
   }
 
-  var spawn = Game.spawns.Spawn1;
-  var target;
+  var loadTarget;
 
-  var extensions = spawn.room.find(FIND_MY_STRUCTURES, {
-    filter: {structureType: STRUCTURE_EXTENSION}
-  }).filter(function (extension) {
-    return extension.energy > 0;
-  });
+  var loadTargets = creep.room.find(FIND_MY_STRUCTURES, {
+    filter: s => isEnergyHolder(s) && s.energy > 0});
 
-  extensions = _(extensions).sortBy('energy').reverse().value();
+  // TODO: heuristics for choosing?
+  // loadTargets = _(loadTargets).sortBy('energy').reverse().value();
 
-  if (extensions.length &&
-      extensions[0].energy > spawn.energy) {
-    target = extensions[0];
+  if (loadTargets.length > 1) {
+    loadTarget = creep.pos.findClosestByPath(loadTargets);
   } else {
-    target = spawn;
+    loadTarget = loadTargets[0];
   }
 
-  if (target.transferEnergy(creep) == ERR_NOT_IN_RANGE) {
-    creep.moveTo(target, globalMoveToOptions);
+  if (loadTarget.transferEnergy(creep) == ERR_NOT_IN_RANGE) {
+    creep.moveTo(loadTarget, globalMoveToOptions);
   }
 };
 
 exports.offloadEnergy = function (creep) {
-  var spawn = Game.spawns.Spawn1;
+  var offloadTarget;
 
-  if (spawn.energy < spawn.energyCapacity) {
-    if (creep.transferEnergy(spawn) == ERR_NOT_IN_RANGE) {
-      creep.moveTo(spawn, globalMoveToOptions);
-    }
-  } else {
-    var extensions = Game.spawns.Spawn1.room.find(FIND_MY_STRUCTURES, {
-      filter: {structureType: STRUCTURE_EXTENSION}
-    }).filter(function (extension) {
-      return extension.energy < extension.energyCapacity;
-    });
+  var offloadTargets = creep.room.find(FIND_MY_STRUCTURES, {
+    filter: s => isEnergyHolder(s) && s.energy < s.energyCapacity});
 
-    if (!extensions.length) {
-      return recharge(creep);
+  if (offloadTargets.length) {
+    if (offloadTargets.length > 1) {
+      offloadTarget = creep.pos.findClosestByPath(offloadTargets);
+    } else {
+      offloadTarget = offloadTargets[0];
     }
 
-    if (creep.transferEnergy(extensions[0]) == ERR_NOT_IN_RANGE) {
-      creep.moveTo(extensions[0], globalMoveToOptions);
+    if (creep.transferEnergy(offloadTarget) == ERR_NOT_IN_RANGE) {
+      creep.moveTo(offloadTarget, globalMoveToOptions);
     }
+
+    return;
   }
+
+  recharge(creep);
 };

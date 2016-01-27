@@ -36,7 +36,7 @@ function fillTowers(creep, towers, options) {
 }
 
 function repair(creep, options) {
-  var repairTargets = utilities.structuresNeedingRepair();
+  var repairTargets = utilities.structuresNeedingRepair(creep.room);
 
   if (repairTargets.length) {
     if (creep.repair(repairTargets[0]) == ERR_NOT_IN_RANGE) {
