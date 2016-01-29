@@ -26,9 +26,7 @@ var ROLE_ORDER = {
 };
 
 function doTowers(room) {
-  var towers = room.find(FIND_MY_STRUCTURES,
-    {filter: {structureType: STRUCTURE_TOWER}});
-
+  var towers = utilities.towers(room);
   var hostiles = room.find(FIND_HOSTILE_CREEPS);
 
   if (hostiles.length) {

@@ -39,6 +39,10 @@ var findMyCreeps = exports.findMyCreeps = function (room, filter) {
   return room.find(FIND_MY_CREEPS, {filter: filter});
 };
 
+exports.towers = _.memoize(function (room) {
+  return findMyStructures(room, {structureType: STRUCTURE_TOWER});
+});
+
 exports.spawn = function (spawn, definition, role) {
   var pieces = _.map(definition, piece => DEFINITIONS[piece]);
 

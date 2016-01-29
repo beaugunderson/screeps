@@ -2,11 +2,6 @@
 
 var utilities = require('utilities');
 
-function getTowers(room) {
-  return room.find(FIND_MY_STRUCTURES, {
-    filter: {structureType: STRUCTURE_TOWER}});
-}
-
 function construct(creep, options) {
   var constructionTargets = creep.room.find(FIND_CONSTRUCTION_SITES);
 
@@ -75,7 +70,7 @@ function build(creep, options) {
     }
   }
 
-  var towers = getTowers(creep.room);
+  var towers = utilities.towers(creep.room);
   var anyTowersHaveEnergy = _.filter(towers, t => t.energy >= 10);
 
   // if there are towers with energy then let them repair things while we
