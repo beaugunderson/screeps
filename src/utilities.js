@@ -94,6 +94,8 @@ exports.structuresNeedingRepair = function (room) {
   if (wallsAndRoads.length) {
     return wallsAndRoads;
   }
+
+  return [];
 };
 
 var wantEnergyCount = exports.wantEnergyCount = function (room) {
