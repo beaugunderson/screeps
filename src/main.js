@@ -25,23 +25,6 @@ var ROLE_ORDER = {
   upgrader: 1
 };
 
-// function spawnCreep(spawn, role) {
-//   spawn.createCreep([
-//     WORK,
-//     WORK,
-//     CARRY,
-//     CARRY,
-//     CARRY,
-//     MOVE,
-//     MOVE,
-//     MOVE
-//   ],
-//   null,
-//   {
-//     role: role
-//   });
-// }
-
 function doTowers(room) {
   var towers = room.find(FIND_MY_STRUCTURES,
     {filter: {structureType: STRUCTURE_TOWER}});
@@ -79,10 +62,10 @@ function pickupDroppedEnergy(creep) {
     return;
   }
 
-  var energy = creep.pos.findClosestByRange(FIND_DROPPED_ENERGY);
+  var energy = creep.pos.findInRange(FIND_DROPPED_ENERGY, 1);
 
-  if (energy) {
-    creep.pickup(energy);
+  if (energy.length) {
+    creep.pickup(energy[0]);
   }
 }
 

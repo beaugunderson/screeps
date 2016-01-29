@@ -25,11 +25,7 @@ function fillTowers(creep, towers, options) {
   var towersNeedingEnergy = _.filter(towers, t => t.energy < t.energyCapacity);
 
   if (towersNeedingEnergy.length) {
-    if (creep.transferEnergy(towersNeedingEnergy[0]) == ERR_NOT_IN_RANGE) {
-      if (options.move) {
-        creep.moveTo(towersNeedingEnergy[0], utilities.globalMoveToOptions);
-      }
-    }
+    utilities.transferToOrMove(creep, towersNeedingEnergy[0], options);
 
     return true;
   }
@@ -49,11 +45,34 @@ function repair(creep, options) {
   }
 }
 
+function needsFilling(structure) {
+  return structure.energy < structure.energyCapacity &&
+         (structure.structureType === STRUCTURE_EXTENSION ||
+          structure.structureType === STRUCTURE_SPAWN);
+}
+
 function build(creep, options) {
   if (!options) {
     options = {
       move: true
     };
+  }
+
+  var fillTargets = creep.room.find(FIND_MY_STRUCTURES, {
+    filter: s => needsFilling(s) && utilities.hasCapacity(s)});
+
+  var deficit = _(fillTargets)
+    .map(s => s.energyCapacity - s.energy)
+    .sum();
+
+  console.log('deficit', deficit);
+
+  if (deficit >= 0) {
+    var fillTarget = utilities.closestOrOnly(creep.pos, fillTargets);
+
+    if (fillTarget) {
+      return utilities.transferToOrMove(creep, fillTarget);
+    }
   }
 
   var towers = getTowers(creep.room);
@@ -78,9 +97,12 @@ module.exports = function (creep) {
   switch (creep.memory.status) {
   case 'loading':
     if (creep.carry.energy < creep.carryCapacity) {
-      utilities.getEnergy(creep);
+      utilities.getEnergy(creep, {
+        force: true,
+        filter: s => s.structureType === STRUCTURE_STORAGE
+      });
 
-      build(creep, {move: false});
+      // build(creep, {move: false});
 
       return;
     }

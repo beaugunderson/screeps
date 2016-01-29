@@ -6,15 +6,12 @@ function balanceSources(room) {
   var sources = room.find(FIND_SOURCES);
   var count = 0;
 
-  _.forEach(Game.creeps, function (creep) {
-    if (creep.memory.role !== 'harvester') {
-      return;
-    }
-
-    count++;
-
-    creep.memory.sourceId = sources[count % sources.length].id;
-  });
+  _(Game.creeps)
+    .filter({memory: {role: 'harvester'}})
+    .forEach(creep => {
+      creep.memory.sourceId = sources[count++ % sources.length].id;
+    })
+    .value();
 }
 
 module.exports = function (creep) {

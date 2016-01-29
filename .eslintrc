@@ -11,6 +11,7 @@
 
   "globals": {
     "ATTACK": true,
+    "CARRY": true,
     "ERR_FULL": true,
     "ERR_NOT_IN_RANGE": true,
     "FIND_CONSTRUCTION_SITES": true,
@@ -22,9 +23,10 @@
     "FIND_STRUCTURES": true,
     "Game": true,
     "HEAL": true,
-    "Memory": true,
     "MOVE": true,
+    "Memory": true,
     "OK": true,
+    "RANGED_ATTACK": true,
     "STRUCTURE_CONTROLLER": true,
     "STRUCTURE_EXTENSION": true,
     "STRUCTURE_RAMPART": true,
@@ -34,6 +36,7 @@
     "STRUCTURE_TOWER": true,
     "STRUCTURE_WALL": true,
     "TOUGH": true,
+    "WORK": true,
     "_": true
   },
 

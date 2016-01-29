@@ -14,10 +14,7 @@ module.exports = function (creep) {
   case 'loading':
     if (creep.carry.energy < creep.carryCapacity ||
         upgrader.memory.recharging) {
-      // let other creeps get energy first
-      if (utilities.wantEnergyCount() === 0) {
-        utilities.getEnergy(creep);
-      }
+      utilities.getEnergy(creep, {waitIfNoStorage: true});
 
       return;
     }
@@ -26,9 +23,7 @@ module.exports = function (creep) {
 
   case 'transporting':
     if (creep.carry.energy > 0) {
-      if (creep.transferEnergy(upgrader) == ERR_NOT_IN_RANGE) {
-        creep.moveTo(upgrader, utilities.globalMoveToOptions);
-      }
+      utilities.transferToOrMove(creep, upgrader);
     } else {
       creep.memory.status = 'loading';
     }
