@@ -53,14 +53,14 @@ function build(creep, options) {
     };
   }
 
-  var fillTargets = creep.room.find(FIND_MY_STRUCTURES, {
-    filter: s => needsFilling(s) && utilities.hasCapacity(s)});
+  var fillTargets = utilities.findMyStructures(creep.room,
+    s => needsFilling(s) && utilities.hasCapacity(s));
 
   var deficit = _(fillTargets)
     .map(s => s.energyCapacity - s.energy)
     .sum();
 
-  console.log('deficit', deficit);
+  console.log('spawn energy deficit', deficit);
 
   if (deficit >= 0) {
     var fillTarget = utilities.closestOrOnly(creep.pos, fillTargets);

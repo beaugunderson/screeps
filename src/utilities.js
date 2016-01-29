@@ -143,8 +143,8 @@ function isEnergyHolder(structure) {
 }
 
 function availableStorage(room) {
-  var storages = room.find(FIND_MY_STRUCTURES, {
-    filter: s => s.structureType === STRUCTURE_STORAGE && s.store.energy > 1000});
+  var storages = findMyStructures(room,
+    s => s.structureType === STRUCTURE_STORAGE && s.store.energy > 1000);
 
   if (storages.length) {
     return storages[0];
@@ -214,8 +214,9 @@ exports.getEnergy = function (creep, options) {
     return;
   }
 
-  var loadTargets = creep.room.find(FIND_MY_STRUCTURES, {
-    filter: s => options.filter(s) && hasEnergy(s)});
+  var loadTargets = findMyStructures(creep.room,
+    s => options.filter(s) && hasEnergy(s));
+
   var loadTarget = closestOrOnly(creep.pos, loadTargets);
 
   if (loadTarget) {
@@ -224,8 +225,9 @@ exports.getEnergy = function (creep, options) {
 };
 
 exports.offloadEnergy = function (creep) {
-  var offloadTargets = creep.room.find(FIND_MY_STRUCTURES, {
-    filter: s => isEnergyHolder(s) && hasCapacity(s)});
+  var offloadTargets = findMyStructures(creep.room,
+    s => isEnergyHolder(s) && hasCapacity(s));
+
   var offloadTarget = closestOrOnly(creep.pos, offloadTargets);
 
   if (offloadTarget) {
