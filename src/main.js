@@ -135,4 +135,11 @@ module.exports.loop = function () {
   //   console.log(`'${key}': '${value}'`);
   //   console.log();
   // });
+
+  var cpu = _.round(Game.cpu.getUsed(), 1);
+  var creeps = _.round(Object.keys(Game.creeps).length * 0.2, 1);
+  var code = _.round(cpu - creeps, 1);
+  var percent = _.round(code / cpu * 100, 1);
+
+  console.log(`CPU: ${cpu}, creeps ${creeps}, code ${code} (${percent}%)`);
 };
