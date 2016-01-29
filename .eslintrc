@@ -46,7 +46,7 @@
     "computed-property-spacing": [2, "never"],
     "consistent-this": [1, "self"],
     "default-case": 2,
-    "func-style": [2, "declaration"],
+    "func-style": [1, "declaration"],
     "guard-for-in": 2,
     "indent": [2, 2],
     "linebreak-style": [2, "unix"],

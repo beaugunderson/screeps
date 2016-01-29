@@ -26,22 +26,42 @@ var globalMoveToOptions = exports.globalMoveToOptions = {
   reusePath: 2
 };
 
-// TODO: add caching to the find* functions?
-var findAllStructures = exports.findAllStructures = function (room, filter) {
+_.memoize.Cache = Map;
+
+// cache the result by the filter or the filter function's code
+function resolver(room, filter) {
+  if (typeof filter === 'function') {
+    return JSON.stringify([room.name, filter.toString()]);
+  }
+
+  return JSON.stringify([room.name, filter]);
+}
+
+var findAllStructures = function (room, filter) {
   return room.find(FIND_STRUCTURES, {filter: filter});
 };
 
-var findMyStructures = exports.findMyStructures = function (room, filter) {
+var findMyStructures = function (room, filter) {
   return room.find(FIND_MY_STRUCTURES, {filter: filter});
 };
 
-var findMyCreeps = exports.findMyCreeps = function (room, filter) {
+var findMyCreeps = function (room, filter) {
   return room.find(FIND_MY_CREEPS, {filter: filter});
 };
 
-exports.towers = _.memoize(function (room) {
+findAllStructures = exports.findAllStructures = _.memoize(findAllStructures, resolver);
+findMyStructures = exports.findMyStructures = _.memoize(findMyStructures, resolver);
+findMyCreeps = exports.findMyCreeps = _.memoize(findMyCreeps, resolver);
+
+exports.invalidateCaches = function () {
+  findAllStructures.cache.clear();
+  findMyStructures.cache.clear();
+  findMyCreeps.cache.clear();
+};
+
+exports.towers = function (room) {
   return findMyStructures(room, {structureType: STRUCTURE_TOWER});
-});
+};
 
 exports.spawn = function (spawn, definition, role) {
   var pieces = _.map(definition, piece => DEFINITIONS[piece]);

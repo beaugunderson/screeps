@@ -127,5 +127,12 @@ function notifyCritical() {
 module.exports.loop = function () {
   notifyCritical();
 
+  utilities.invalidateCaches();
+
   _.forEach(Game.rooms, doRoom);
+
+  // utilities.findMyStructures.cache.forEach(function (value, key) {
+  //   console.log(`'${key}': '${value}'`);
+  //   console.log();
+  // });
 };
