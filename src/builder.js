@@ -60,8 +60,6 @@ function build(creep, options) {
     .map(s => s.energyCapacity - s.energy)
     .sum();
 
-  console.log('spawn energy deficit', deficit);
-
   if (deficit >= 0) {
     var fillTarget = utilities.closestOrOnly(creep.pos, fillTargets);
 
