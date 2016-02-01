@@ -31,6 +31,9 @@ module.exports = function (creep) {
     var healer = attackFlag.findClosestByRange(FIND_HOSTILE_CREEPS, {
       filter: c => c.getActiveBodyparts(HEAL) > 0});
 
+    var hostileTower = attackFlag.findClosestByRange(FIND_STRUCTURES, {
+      filter: {structureType: STRUCTURE_TOWER}});
+
     var hostileCreep = attackFlag.findClosestByRange(FIND_HOSTILE_CREEPS, {
       filter: c => c.getActiveBodyparts(ATTACK) > 0});
 
@@ -46,7 +49,8 @@ module.exports = function (creep) {
     var docileCreep = attackFlag.findClosestByRange(FIND_HOSTILE_CREEPS, {
       filter: c => c.getActiveBodyparts(ATTACK) === 0});
 
-    var hostile = healer || hostileCreep || hostileStructure || docileCreep;
+    var hostile = hostileTower || healer || hostileCreep || hostileStructure ||
+      docileCreep;
 
     if (hostile) {
       if (creep.attack(hostile) === ERR_NOT_IN_RANGE) {
